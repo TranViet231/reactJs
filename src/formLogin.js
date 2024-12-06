@@ -1,103 +1,33 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function FormLogin() {
-    const [formData, setFormData] = useState({
-        isPersonal: true,
-        email: '',
-        name: '',
-        password: '',
-        gender: 'Male',
-    });
+    const [weatherData, setWeatherData] = useState({});
+
+    useEffect(() => {
+        const url = "https://api.openweathermap.org/data/2.5/forecast?q=Hanoi&appid=09a71427c59d38d6a34f89b47d75975c&units=metric";
+        fetch(url).then(rs => rs.json())
+            .then(data => {setWeatherData(data.list);
+            })
+    }, []);
 
     return (
-        <div className="container"
-            style={{width: '500px'}}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title"
-                        style={{textAlign: 'center'}}>Registration</h5>
-
-                    <div className="form-group">
-                        <div className="form-check form-check-inline">
-                            <input
-                                className="form-check-input"
-                                type="radio"
-                                name="accountType"
-                                checked={true}
+        <section className="weather-container">
+            {weatherData.length > 0 && (
+                <div className="grid-container">
+                    {weatherData.map((forecast, index) => (
+                        <div key={index} className="weather-card">
+                            <h3>{new Date(forecast.dt * 1000).toLocaleString()}</h3>
+                            <p>{forecast.main.temp}°C</p>
+                            <p>{forecast.weather[0].description}</p>
+                            <img
+                                src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
+                                alt="Weather Icon"
+                                className="weather-icon"
                             />
-                            <label className="form-check-label" htmlFor="personal">
-                                Personal
-                            </label>
                         </div>
-                        <div className="form-check form-check-inline">
-                            <input
-                                className="form-check-input"
-                                type="radio"
-                            />
-                            <label className="form-check-label" htmlFor="company">
-                                Company
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="name">Name</label>
-
-                        <input
-                            type="text"
-                            className="form-control"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label
-                            htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="male"
-                                checked={true}
-                            />
-                            Male
-                        </label>
-
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                            />
-                            Female
-                        </label>
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">
-                        Submit
-                    </button>
-
-                    <p>
-                        By clicking Register, you agree on our <a href="#">Privacy Policy for W3Docs.</a>
-                    </p>
+                    ))}
                 </div>
-            </div>
-        </div>
-    );
+            )}
+        </section>
+    )
 }
